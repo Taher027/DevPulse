@@ -2,14 +2,22 @@ import type { Request , Response} from "express"
 import { authService } from "./auth.service"
 
 const userSignup = async(req:Request, res:Response) =>{
-    console.log('from auth controller', req.body)
-    const result = await authService.createUser(req.body);
-    console.log("result from auth.service:", result)
+   
+    try{
+        const result = await authService.createUser(req.body);
+    
     res.status(201).json({
         status:"success",
         message:"user created successfully",
         data: result
     })
+    }catch(error:any){
+             res.status(400).json({
+                status: false,
+                message: error.message,
+                 error:error
+             })
+    }
 
 }
 const userLogin = async(req:Request, res:Response) =>{

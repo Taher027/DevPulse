@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { pool } from './db';
 import { AuthRouter } from './module/user/auth.route';
+import { issuesRoute } from './module/issues/issues.route';
 const app:Application = express();
 
 
@@ -17,6 +18,8 @@ app.get('/', (req: express.Request, res: express.Response) =>{
 
 
 app.use('/api/auth', AuthRouter)
+
+app.use('/api', issuesRoute)
 
    // Handle user creation logic here
 export default app;
