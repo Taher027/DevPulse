@@ -1,5 +1,6 @@
 import type { TIssues } from "./issues.interface";
 import { pool } from "../../db";
+import type { JwtPayload } from "jsonwebtoken";
 
 const createIssesToDB =async (data: TIssues) =>{
 
@@ -106,9 +107,26 @@ const getSingleIssuesFromDB = async(id:string) =>{
 
 
 
-const updateIssuesToDB = async(id:string, data:Partial<TIssues>)=>{
+const updateIssuesToDB = async(id:string, data:Partial<TIssues>,user:JwtPayload)=>{
+    
 
     const {title, description, type, status, } = data;
+    if(user.role !== 'maintainer' && user.role === 'contributor'){
+        const existingIssue = await pool.query(`
+        SELECT * FROM issues WHERE id = $1
+        
+        `,[id]);
+
+        const issues_reporter_id = existingIssue.rows[0]?.reporter_id;
+        if(issues_reporter_id !== user.id){
+            throw new Error("Unauthorized to update this issue")
+        }
+    }
+     
+
+
+
+
     const result = await pool.query(`
             UPDATE issues
             SET title = COALESCE($1, title),
@@ -118,8 +136,10 @@ const updateIssuesToDB = async(id:string, data:Partial<TIssues>)=>{
             WHERE id = $5
             RETURNING *
         `, [title, description, type, status, id]);
+        console.log('result from service: ', result.rows[0]); 
 
-    return result.rows[0];
+
+    return result.rows;
 }
 
 const deleteIssuesFromDB = async(id:string) =>{

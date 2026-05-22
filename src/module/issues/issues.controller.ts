@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { IssuesService } from "./issues.service";
 import { pool } from "../../db";
+import type { JwtPayload } from "jsonwebtoken";
 
 const createIssues =async (req:Request, res:Response) =>{
     console.log('from controller: ', req?.user)
@@ -78,11 +79,18 @@ const getSingleIssue = async (req: Request, res: Response) => {
 
 const updateIssue = async (req: Request, res: Response) =>{
     const {id} = req.params;
+    const user = req.user;
     const {title, description, type, status} = req.body;
 
     try {
-        const updatedIssue = await IssuesService.updateIssuesToDB(id as string, req.body);
-        console.log('in controller update: ', updatedIssue);
+        const updatedIssue = await IssuesService.updateIssuesToDB(id as string, req.body, user as JwtPayload);
+
+        if(updatedIssue.length === 0){
+            return res.status(404).json({
+                status: false,
+                message: "Issue not found!"
+            });
+        }
         res.status(200).json({
             status: "success",
             message: "Issue updated successfully",
