@@ -21,8 +21,9 @@ const userSignup = async(req:Request, res:Response) =>{
 
 }
 const userLogin = async(req:Request, res:Response) =>{
+    const {email, password} = req.body;
  try {
-       const result = await authService.userLogin(req.body)
+       const result = await authService.userLogin({email,password})
     const {accessToken, refreshToken, user} = result;
 
 res.cookie("refreshToken",refreshToken, {

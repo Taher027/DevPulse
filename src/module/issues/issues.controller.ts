@@ -3,6 +3,7 @@ import { IssuesService } from "./issues.service";
 import { pool } from "../../db";
 
 const createIssues =async (req:Request, res:Response) =>{
+    console.log('from controller: ', req?.user)
 
    try{
           const result = await IssuesService.createIssesToDB(req.body);
