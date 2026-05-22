@@ -7,7 +7,10 @@ dotenv.config({
 
 const config = {
     CONNECTION_STRING: process.env.CONNECTION_STRING,
-    PORT: process.env.PORT
+    PORT: process.env.PORT,
+    SALT_ROUNDS: process.env.SALT_ROUNDS,
+    JWT_ACCESSTOKEN_SECRET: process.env.JWT_ACCESSTOKEN_SECRET,
+    JWT_REFRESHTOKEN_SECRET: process.env.JWT_REFRESHTOKEN_SECRET
 }
 
 export default config;
