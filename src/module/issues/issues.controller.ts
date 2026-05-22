@@ -25,8 +25,9 @@ const createIssues =async (req:Request, res:Response) =>{
 }
 
 const getAllIssues = async (req: Request, res: Response) => {
+    
     try {
-        const issues = await IssuesService.getAllIssuesFromDB();
+        const issues = await IssuesService.getAllIssuesFromDB(req.query);
 
 
         if(issues.length === 0){
