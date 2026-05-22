@@ -26,8 +26,47 @@ const getAllIssuesFromDB = async() =>{
        
     return result.rows;
 }
+const getSingleIssuesFromDB = async(id:string) =>{
+    const result = await pool.query(`
+        SELECT * FROM issues WHERE id = $1
+        
+        `,[id]);
+
+
+        return result
+}
+
+
+
+const updateIssuesToDB = async(id:string, data:Partial<TIssues>)=>{
+
+    const {title, description, type, status, } = data;
+    const result = await pool.query(`
+            UPDATE issues
+            SET title = COALESCE($1, title),
+                description = COALESCE($2, description),
+                type = COALESCE($3, type),
+                status = COALESCE($4, status)
+            WHERE id = $5
+            RETURNING *
+        `, [title, description, type, status, id]);
+
+    return result.rows[0];
+}
+
+const deleteIssuesFromDB = async(id:string) =>{
+    const result = await pool.query(`
+        DELETE FROM issues WHERE id = $1
+        
+        `,[id]);
+
+        return result;
+}
 
 export const IssuesService ={
     createIssesToDB,
-    getAllIssuesFromDB
+    getAllIssuesFromDB,
+    getSingleIssuesFromDB,
+    updateIssuesToDB,
+    deleteIssuesFromDB
 }
