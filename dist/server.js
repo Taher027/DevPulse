@@ -532,6 +532,15 @@ router2.get("/issues/:id", IssuesController.getSingleIssue);
 router2.delete("/issues/:id", auth_default(USER_ROLE.maintainer), IssuesController.deleteIssue);
 var issuesRoute = router2;
 
+// src/middleware/globalErrorHandler.ts
+var globalErrorHandler = (err, req, res, next) => {
+  res.status(500).json({
+    success: false,
+    message: err.message || "Internal Server Error"
+  });
+};
+var globalErrorHandler_default = globalErrorHandler;
+
 // src/app.ts
 var app = express();
 app.use(cookieParser());
@@ -543,6 +552,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/auth", AuthRouter);
 app.use("/api", issuesRoute);
+app.use(globalErrorHandler_default);
 var app_default = app;
 
 // src/server.ts
