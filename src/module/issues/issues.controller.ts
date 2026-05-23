@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { IssuesService } from "./issues.service";
 import { pool } from "../../db";
 import type { JwtPayload } from "jsonwebtoken";
+import sendResponse from "../../utils/sendResponse";
 
 const createIssues =async (req:Request, res:Response) =>{
     console.log('from controller: ', req?.user)
@@ -33,22 +34,33 @@ const getAllIssues = async (req: Request, res: Response) => {
 
 
         if(issues.length === 0){
-            return res.status(404).json({
-                status: false,
-                message: "No issues found!"
-            });
+            return sendResponse(res, {
+            statusCode: 404,
+            success: false,
+            message: "No issues found !"
+            }
+         )
         }
-        res.status(200).json({
-            status: "success",
+
+
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
             message: "Issues retrieved successfully",
-            data: issues
-        });
+            data: issues,
+            }
+         )
+
+       
     } catch (error: any) {
-        res.status(500).json({
-            status: false,
+
+          sendResponse(res, {
+            statusCode: 500,
+            success: false,
             message: error.message,
             error: error
-        });
+            }
+         )
     }
 };
 const getSingleIssue = async (req: Request, res: Response) => {
@@ -63,11 +75,15 @@ const getSingleIssue = async (req: Request, res: Response) => {
                 message: "No issues found!"
             });
         }
-        res.status(200).json({
-            status: "success",
+
+          sendResponse(res, {
+            statusCode: 200,
+            success: true,
             message: "Issues retrieved successfully",
-            data: issue.rows[0]
-        });
+            data: issue.rows[0],
+            }
+         )
+
     } catch (error: any) {
         res.status(500).json({
             status: false,
@@ -91,17 +107,23 @@ const updateIssue = async (req: Request, res: Response) =>{
                 message: "Issue not found!"
             });
         }
-        res.status(200).json({
-            status: "success",
-            message: "Issue updated successfully",
-            data: updatedIssue
-        });
+        sendResponse(res, {
+            statusCode: 201,
+            success: true,
+            message: "User Created successfully!",
+            data: updatedIssue,
+            }
+         )
+
+        
     } catch (error: any) {
-        res.status(500).json({
-            status: false,
+       sendResponse(res, {
+            statusCode: 500,
+            success: false,
             message: error.message,
             error: error
-        });
+            }
+         )
     }
         
 }
@@ -110,18 +132,21 @@ const deleteIssue =async (req: Request, res: Response) =>{
     const {id} = req.params;
     try{
         const result = await IssuesService.deleteIssuesFromDB(id as string);
-        console.log(result)
-        res.status(200).json({
-            status: "success",
-            message: "Issue deleted successfully",
-        });
+          sendResponse(res, {
+            statusCode: 20,
+            success: true,
+            message: "User deleted successfull!",
+            }
+         )
 
     }catch(error:any){
-        res.status(500).json({
+      sendResponse(res, {
+            statusCode: 500,
             success: false,
             message: error.message,
             error: error
-        })
+            }
+         )
     }
 }
 
